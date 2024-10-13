@@ -1,3 +1,7 @@
+import torch
+from torch.utils.data import Dataset
+
+
 class CMUDataset(Dataset):
     def __init__(self, words, phonemes, tokenizer, max_length=128):
         self.words = words
