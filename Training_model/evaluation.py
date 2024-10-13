@@ -1,3 +1,7 @@
+import pandas as pd
+import torch
+
+
 #Function to give a overview of the phoneme error rate
 def error_rate(timit, asr,phn = True):
   if phn:
