@@ -92,3 +92,28 @@ def error_rate(timit, asr,phn = True):
       i-=1
   per_result = round( (numSub + numDel + numIns) / (float) (len(r)), 3)
   return per_result
+
+
+def evaluate_per(model, tokenizer, test_loader):
+    model.eval()
+    total_per = 0
+    total_sequences = 0
+
+    with torch.no_grad():
+        for batch in test_loader:
+            input_ids = batch['input_ids'].to(device)
+
+            predicted_ids = model.generate(input_ids)
+            predicted_phonemes = [tokenizer.decode(ids, skip_special_tokens=True).split() for ids in predicted_ids]
+            true_phonemes = [tokenizer.decode(ids, skip_special_tokens=True).split() for ids in batch['labels']]
+
+            # Рассчет PER для каждой последовательности
+            for true_seq, pred_seq in zip(true_phonemes, predicted_phonemes):
+                per = error_rate(" ".join(true_seq), " ".join(pred_seq))
+                print()
+                if per >= 1:
+                  per += 1
+                total_per += per
+                total_sequences += 1
+
+    return total_per / total_sequences
